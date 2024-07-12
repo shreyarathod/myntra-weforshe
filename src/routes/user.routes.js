@@ -20,4 +20,6 @@ router.post('/logout', verifyJWT, logoutUser);
 
 router.route("/current-user").get(verifyJWT, getCurrentUser)
 
+
+
 export default router

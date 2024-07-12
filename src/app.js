@@ -1,6 +1,10 @@
 import express, { json, urlencoded } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import passport from 'passport';
+
+
+
 
 const app = express();
 
@@ -21,8 +25,12 @@ app.get('/test', (req, res) => {
 
 
 import userRouter from "./routes/user.routes.js";
-
 app.use("/api/v1/users", userRouter)
 
+import boardRouter from "./routes/board.routes.js";
+app.use("/api/v1/boards", boardRouter)
+
+import postRouter from "./routes/post.routes.js";
+app.use("/api/v1/posts", postRouter)
 
 export { app }

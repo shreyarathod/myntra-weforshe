@@ -37,7 +37,15 @@ const userSchema = new mongoose.Schema(
         },
         refreshToken:{
             type:String,
-        }
+        },
+        boards: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Board'
+          }],
+          likedBoards: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Board'
+          }]
     },
     {
         timestamps:true
