@@ -33,4 +33,10 @@ app.use("/api/v1/boards", boardRouter)
 import postRouter from "./routes/post.routes.js";
 app.use("/api/v1/posts", postRouter)
 
+import likeRoutes from "./routes/like.routes.js";
+app.use('/api/v1/likes', likeRoutes);
+
+import commentRoutes from "./routes/comment.routes.js";
+app.use('/api/v1/comments', commentRoutes);
+
 export { app }

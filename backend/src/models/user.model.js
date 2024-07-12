@@ -42,10 +42,6 @@ const userSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Board'
           }],
-          likedBoards: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Board'
-          }]
     },
     {
         timestamps:true
