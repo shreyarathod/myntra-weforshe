@@ -9,9 +9,20 @@ function Register() {
   const [password, setPassword] = useState('');
   const [avatar, setAvatar] = useState(null);
   const [coverImage, setCoverImage] = useState(null);
-  const navigate = useNavigate();  // Initialize useNavigate
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [coverImageFile, setCoverImageFile] = useState(null);
+  const navigate = useNavigate();
 
-  // Handle form submission
+  const handleAvatarChange = (event) => {
+    setAvatarFile(event.target.files[0]);
+    setAvatar(event.target.files[0]);
+  };
+
+  const handleCoverImageChange = (event) => {
+    setCoverImageFile(event.target.files[0]);
+    setCoverImage(event.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -24,14 +35,12 @@ function Register() {
     if (coverImage) formData.append('coverImage', coverImage);
 
     try {
-      // Send registration data to the server
       const response = await axiosInstance.post('/users/register', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       if (response.status === 201) {
-        // Redirect to the login page upon successful registration
-        navigate('/login');  // Ensure this redirect happens
+        navigate('/login');
       } else {
         console.error('Registration failed');
       }
@@ -41,14 +50,9 @@ function Register() {
   };
 
   return (
-    <div
-      className="flex justify-center items-center min-h-screen bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: `url('https://th.bing.com/th/id/R.0aa75ca8dd35d075642b78c03a928f54?rik=rKNn7O6DctuGEg&riu=http%3a%2f%2fwallpapercave.com%2fwp%2fwp1836740.jpg&ehk=BDzXZSebj0mKsCINhGplmyxLDGLCptGm6%2fFuLBWy9pE%3d&risl=&pid=ImgRaw&r=0')`,
-      }}
-    >
-      <div className="w-[450px] bg-transparent border-2 border-slate-400 backdrop-blur-lg shadow-lg text-white rounded-lg p-10">
-        <form onSubmit={handleSubmit}>  {/* Attach handleSubmit */}
+    <div className="flex justify-center items-center min-h-screen bg-cover bg-center bg-no-repeat bg-[url('https://images.unsplash.com/photo-1559762705-2123aa9b467f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')]">
+      <div className="w-[450px] bg-transparent border-2 border-slate-400 backdrop-blur-lg shadow-xl text-zinc-600 rounded-lg p-10">
+        <form onSubmit={handleSubmit}>
           <h1 className="text-4xl text-center mb-8 font-bold">Register</h1>
           <div className="relative mb-5">
             <input
@@ -58,7 +62,7 @@ function Register() {
               name="fullName"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full h-12 placeholder:text-white/70 bg-transparent border-2 border-slate-400 rounded-full text-white px-6 py-3 outline-none"
+              className="w-full h-12 placeholder:text-zinc-600 bg-transparent border-2 text-zinc-600 border-zinc-600 rounded-full text-zinc-600 px-6 py-3 outline-none"
             />
             <i className="bx bx-user-pin absolute right-5 top-3 text-xl"></i>
           </div>
@@ -70,7 +74,7 @@ function Register() {
               name="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full h-12 placeholder:text-white/70 bg-transparent border-2 border-slate-400 rounded-full text-white px-6 py-3 outline-none"
+              className="w-full h-12 placeholder:text-zinc-600 bg-transparent border-2 border-zinc-600 text-zinc-600 rounded-full px-6 py-3 outline-none"
             />
             <i className="bx bxs-user absolute right-5 top-3 text-xl"></i>
           </div>
@@ -82,7 +86,7 @@ function Register() {
               name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full h-12 placeholder:text-white/70 bg-transparent border-2 border-slate-400 rounded-full text-white px-6 py-3 outline-none"
+              className="w-full h-12 placeholder:text-zinc-600 bg-transparent border-2 border-zinc-600 text-zinc-600 rounded-full  px-6 py-3 outline-none"
             />
             <i className="bx bxs-envelope absolute right-5 top-3 text-xl"></i>
           </div>
@@ -94,7 +98,7 @@ function Register() {
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full h-12 placeholder:text-white/70 bg-transparent border-2 border-slate-400 rounded-full text-white px-6 py-3 outline-none"
+              className="w-full h-12 placeholder:text-zinc-600 bg-transparent border-2 border-zinc-600 text-zinc-600 rounded-full px-6 py-3 outline-none"
             />
             <i className="bx bxs-lock-alt absolute right-5 top-3 text-xl"></i>
           </div>
@@ -103,14 +107,14 @@ function Register() {
               type="file"
               id="avatar"
               name="avatar"
-              onChange={(e) => setAvatar(e.target.files[0])}
+              onChange={handleAvatarChange}
               className="hidden"
             />
             <label
               htmlFor="avatar"
-              className="w-full h-12 text-white/70 bg-transparent border-2 border-slate-400 rounded-full text-white px-6 py-3 outline-none flex items-center justify-center cursor-pointer"
+              className="w-full h-12 text-zinc-600 bg-transparent border-2 border-zinc-600 rounded-full px-6 py-3 outline-none flex items-center justify-center cursor-pointer"
             >
-              Select Avatar
+              {avatarFile ? avatarFile.name : 'Select Avatar'}
             </label>
           </div>
           <div className="relative mb-5">
@@ -118,14 +122,14 @@ function Register() {
               type="file"
               id="coverImage"
               name="coverImage"
-              onChange={(e) => setCoverImage(e.target.files[0])}
+              onChange={handleCoverImageChange}
               className="hidden"
             />
             <label
               htmlFor="coverImage"
-              className="w-full h-12 text-white/70 bg-transparent border-2 border-slate-400 rounded-full text-white px-6 py-3 outline-none flex items-center justify-center cursor-pointer"
+              className="w-full h-12 text-zinc-600 bg-transparent border-2 border-zinc-600 rounded-full px-6 py-3 outline-none flex items-center justify-center cursor-pointer"
             >
-              Select Cover Image
+              {coverImageFile ? coverImageFile.name : 'Select Cover Image'}
             </label>
           </div>
           <button

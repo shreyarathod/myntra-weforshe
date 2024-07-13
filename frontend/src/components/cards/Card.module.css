@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.cardContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem; /* Space between cards */
+    overflow: hidden; /* Hide overflow */
+    padding: 1rem; /* Padding around the container */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+  }
+  
+  /* The card itself */
+  .card {
+    /* Make sure cards have the same height and width */
+    flex: 1 1 300px; /* Flex basis of 200px and can grow/shrink */
+    max-width: calc(25% - 1rem); /* Ensure a maximum of 4 cards per row */
+    height: 350px; /* Fixed height */
+    border-radius: 12px; /* Rounded corners */
+    overflow: hidden; /* Ensure content stays within the rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    margin: 0 auto; /* Center the card in the container */
+  }
+  
+  /* On smaller screens */
+  @media (max-width: 1200px) {
+    .card {
+      max-width: calc(33.333% - 1rem); /* 3 cards per row */
+    }
+  }
+  
+  @media (max-width: 900px) {
+    .card {
+      max-width: calc(50% - 1rem); /* 2 cards per row */
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .card {
+      max-width: calc(100% - 1rem); /* 1 card per row */
+    }
+  }
+  

@@ -2,6 +2,9 @@ import Board  from '../models/board.model.js'; // Adjust the path as necessary
 import {User} from '../models/user.model.js'; // Adjust the path as necessary
 import postModel from '../models/post.model.js';
 import { ApiError } from '../utils/ApiError.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { ApiResponse } from '../utils/ApiResponse.js';
+
 
 export const createBoard = async (req, res, next) => {
   try {
@@ -10,7 +13,7 @@ export const createBoard = async (req, res, next) => {
     let collaboratorIds = [];
     if (req.body.collaborators) {
       const collaboratorUsernames = req.body.collaborators.split(',').map(username => username.trim());
-      const collaborators = await User.find({ username: { $in: collaboratorUsernames } });
+      const collaborators = await User.find({ username: { $in: collaboratorUsernames } }); // Fixed to User model
       collaboratorIds = collaborators.map(collaborator => collaborator._id);
     }
 
@@ -39,6 +42,8 @@ export const createBoard = async (req, res, next) => {
     next(new ApiError(500, 'Error creating board'));
   }
 };
+
+
 
 
 
@@ -130,3 +135,38 @@ export const deleteBoard = async (req, res) => {
     res.status(500).json({ success: false, message: 'An error occurred while deleting the board.' });
   }
 };
+
+export const getPostsForBoard = asyncHandler(async (req, res) => {
+  const { boardId } = req.params;  // Extract the boardId from the request params
+
+  // Find the board by ID and populate the posts field
+  const board = await Board.findById(boardId)
+    .populate({
+      path: 'posts',
+      select: 'title description image',  // Adjust the fields to include relevant post information
+    })
+    .exec();
+
+  if (!board) {
+    throw new ApiError(404, 'Board not found');
+  }
+
+  res.status(200).json(new ApiResponse(200, board.posts, 'Posts fetched successfully'));
+});
+
+export const getBoardById = async (req, res) => {
+  try {
+      const boardId = req.params.boardId; // Get boardId from URL parameters
+      const board = await Board.findById(boardId).exec(); // Fetch the board from the database
+
+      if (!board) {
+          return res.status(404).json({ error: 'Board not found' }); // Return 404 if the board does not exist
+      }
+
+      res.status(200).json({ data: board }); // Return the board data
+  } catch (error) {
+      console.error('Error fetching board by ID:', error);
+      res.status(500).json({ error: 'Internal Server Error' }); // Return 500 for any server errors
+  }
+};
+

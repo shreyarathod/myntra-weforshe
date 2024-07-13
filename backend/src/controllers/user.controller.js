@@ -104,63 +104,46 @@ export const registerUser = asyncHandler(async (req,res) =>{
 
 })
 
-export const loginUser = asyncHandler(async (req, res) =>{
-   // req body -> data
-   // username or email
-   //find the user
-   //password check
-   //access and referesh token
-   //send cookie
-
-   const {email, password} = req.body
-   console.log(email);
-
-   if (!email) {
-       throw new ApiError(400, " email is required")
-   }
-   
-   // Here is an alternative of above code based on logic discussed in video:
-   // if (!(username || email)) {
-   //     throw new ApiError(400, "username or email is required")
-       
-   // }
-
-   const user = await User.findOne({email})
-
-   if (!user) {
-       throw new ApiError(404, "User does not exist")
-   }
-
-  const isPasswordValid = await user.isPasswordCorrect(password)
-
-  if (!isPasswordValid) {
-   throw new ApiError(401, "Invalid user credentials")
-   }
-
-  const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id)
-
-   const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
-
-   const options = {
-       httpOnly: true,
-       secure: true
-   }
-
-   return res
-   .status(200)
-   .cookie("accessToken", accessToken, options)
-   .cookie("refreshToken", refreshToken, options)
-   .json(
-       new ApiResponse(
-           200, 
-           {
-               user: loggedInUser, accessToken, refreshToken
-           },
-           "User logged In Successfully"
-       )
-   )
-
-})
+export const loginUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+  
+    if (!email || !password) {
+      throw new ApiError(400, "Email and password are required");
+    }
+  
+    const user = await User.findOne({ email });
+  
+    if (!user) {
+      throw new ApiError(404, "User does not exist");
+    }
+  
+    const isPasswordValid = await user.isPasswordCorrect(password);
+  
+    if (!isPasswordValid) {
+      throw new ApiError(401, "Invalid credentials");
+    }
+  
+    const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id);
+  
+    const options = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',  // Ensure cookies are only sent over HTTPS in production
+      sameSite: 'Strict'  // Prevent cross-site request forgery
+    };
+  
+    res.cookie("accessToken", accessToken, options);
+    res.cookie("refreshToken", refreshToken, options);
+  
+    const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
+  
+    res.status(200).json({
+      user: loggedInUser,
+      accessToken,
+      refreshToken
+    });
+  });
+  
+  
 
 
 export const logoutUser = asyncHandler(async(req, res) => {
@@ -201,3 +184,25 @@ export const getCurrentUser = asyncHandler(async(req, res) => {
 })
 
 
+
+
+
+export const getUserBoards = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  // Find the user and populate the boards field
+  const user = await User.findById(userId)
+    .populate({
+      path: 'boards',
+      select: 'name _id',  // Select name and id fields only
+    })
+    .exec();
+
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+
+  res.status(200).json(new ApiResponse(200, user.boards, 'Boards fetched successfully'));
+});
+
+  
