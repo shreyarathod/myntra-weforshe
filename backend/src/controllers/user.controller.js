@@ -180,7 +180,8 @@ export const logoutUser = asyncHandler(async(req, res) => {
        httpOnly: true,
        secure: true
    }
-
+   console.log("logged out succesfully");
+   
    return res
    .status(200)
    .clearCookie("accessToken", options)

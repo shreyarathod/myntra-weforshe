@@ -9,9 +9,11 @@ import passport from 'passport';
 const app = express();
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials : true
-}))
+    origin: 'http://localhost:5173',  // Your frontend URL
+    methods: 'GET,POST,PUT,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type,Authorization',
+    credentials: true  // Allow credentials
+  }));
 
 app.use(cookieParser());
 app.use(express.urlencoded({extended: true,limit:"16kb"}))
