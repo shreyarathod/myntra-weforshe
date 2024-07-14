@@ -16,9 +16,11 @@ function BoardDisplay() {
                 console.log('Fetching data for boardId:', boardId);
                 const boardResponse = await axios.get(`http://localhost:8000/api/v1/boards/${boardId}`);
                 setBoard(boardResponse.data.data);
+                console.log(board)
 
                 const postsResponse = await axios.get(`http://localhost:8000/api/v1/boards/${boardId}/posts`);
                 setPosts(postsResponse.data.data);
+                console.log(posts)
             } catch (error) {
                 console.error('Error fetching board data:', error);
             }
@@ -26,6 +28,10 @@ function BoardDisplay() {
 
         fetchBoardData();
     }, [boardId]);
+
+    const handlePostRedirection = (postId) => () => {
+        navigate(`/post/${postId}`);  
+    };
 
     if (!board) return <div>Loading...</div>;
     return (
@@ -57,10 +63,11 @@ function BoardDisplay() {
                         <p className="text-xl font-semibold">Your Posts</p>
                     </div>
                     
-                    <div className="flex flex-wrap">
+                    <div className="flex flex-wrap .cardContainer">
                         {posts.map((post) => (
-                            <div key={post._id} className="w-full sm:w-1/4 px-2 mb-4">
+                            <div key={post._id} className="w-full sm:w-1/4 px-2 mb-4 .card">
                                 <img
+                                onClick={handlePostRedirection(post._id)}
                                     src={post.image}
                                     alt={post.title}
                                     className="w-full rounded-lg"

@@ -100,9 +100,33 @@ const getLikedBoards = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, likedBoards, "Liked Boards retrieved successfully"));
 });
 
+const getLikeStatus = async (req, res) => {
+  const { postId } = req.params;
+  const { _id: userId } = req.user;
+
+  if (!postId) {
+    throw new ApiError(400, 'Post ID is required');
+  }
+
+  try {
+    const like = await Like.findOne({ post: postId, likedBy: userId });
+
+    if (like) {
+      return res.status(200).json({ liked: true });
+    } else {
+      return res.status(200).json({ liked: false });
+    }
+  } catch (error) {
+    throw new ApiError(500, 'Failed to fetch like status');
+  }
+};
+
+
+
 export {
     togglePostLike,
     toggleBoardLike, // Corrected name
     toggleCommentLike,
-    getLikedBoards
+    getLikedBoards,
+    getLikeStatus
 };

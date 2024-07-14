@@ -3,7 +3,8 @@ import {
     togglePostLike,     // Updated from toggleVideoLike
     toggleBoardLike,   // Added for board likes
     toggleCommentLike,
-    getLikedBoards      // Updated from getLikedVideos
+    getLikedBoards,
+    getLikeStatus     // Updated from getLikedVideos
 } from "../controllers/like.controller.js";
 import verifyJWT from "../middleware/auth.middleware.js";
 
@@ -22,5 +23,7 @@ router.post("/comments/:commentId/like", toggleCommentLike);
 
 // Get all liked boards for the authenticated user
 router.get("/users/me/liked-boards", getLikedBoards);
+
+router.get('/posts/:postId/status', getLikeStatus);
 
 export default router;

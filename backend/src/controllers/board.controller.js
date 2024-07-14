@@ -137,21 +137,25 @@ export const deleteBoard = async (req, res) => {
 };
 
 export const getPostsForBoard = asyncHandler(async (req, res) => {
-  const { boardId } = req.params;  // Extract the boardId from the request params
+  try {
+    const { boardId } = req.params;
 
-  // Find the board by ID and populate the posts field
-  const board = await Board.findById(boardId)
-    .populate({
-      path: 'posts',
-      select: 'title description image',  // Adjust the fields to include relevant post information
-    })
-    .exec();
+    // Fetch posts related to the board
+    const posts = await postModel.find({ board: boardId }); // Modify this query if you use different field names
 
-  if (!board) {
-    throw new ApiError(404, 'Board not found');
-  }
-
-  res.status(200).json(new ApiResponse(200, board.posts, 'Posts fetched successfully'));
+    return res.status(200).json({
+        success: true,
+        message: 'Posts fetched successfully',
+        data: posts
+    });
+} catch (error) {
+    console.error('Error fetching posts for board:', error);
+    return res.status(500).json({
+        success: false,
+        message: 'Internal Server Error',
+        error: error.message
+    });
+}
 });
 
 export const getBoardById = async (req, res) => {

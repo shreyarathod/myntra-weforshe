@@ -1,5 +1,6 @@
 import postModel from '../models/post.model.js';
 import Board from '../models/board.model.js';
+import { ApiError } from '../utils/ApiError.js';
 
 
 
@@ -107,4 +108,29 @@ export const getPostById = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+export const createPostWithUrl = async (req, res) => {
+  try {
+    const { board, title, description, imageUrl } = req.body;
+
+    // Check if all fields are provided
+    if (!board || !title || !description || !imageUrl) {
+      return res.status(400).json({ message: 'All fields are required.' });
+    }
+
+    // Create the post
+    const newPost = await postModel.create({
+      board,
+      title,
+      description,
+      image: imageUrl  // Use imageUrl instead of file path
+    });
+
+    res.status(201).json({ message: 'Post created successfully!', post: newPost });
+  } catch (error) {
+    console.error('Error creating post:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 

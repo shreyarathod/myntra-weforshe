@@ -26,7 +26,7 @@ export const addComment = asyncHandler(async (req, res) => {
   const comment = await Comment.create({
     post: postId,
     content,
-    author: userId
+    owner: userId
   });
 
   // Respond with success message and the new comment data
@@ -91,16 +91,20 @@ export const deleteComment = async (req, res) => {
 // Get all comments for a specific post
 export const getCommentsByPostId = asyncHandler(async (req, res) => {
   const { postId } = req.params;
+  const { page = 1, limit = 5 } = req.query;  // Get page and limit from query params
 
   // Validate post ID
   if (!postId) {
     throw new ApiError(400, 'Post ID is required');
   }
 
-  // Get comments for the post
-  const comments = await Comment.find({ post: postId })
-    .populate('owner', 'username')  // Populate the author field to include username
-    .exec();
+  // Get comments for the post with pagination
+  const options = {
+    page: parseInt(page, 10),
+    limit: parseInt(limit, 10),
+    populate: { path: 'owner', select: 'username' },  // Populate the owner field to include username
+  };
+  const comments = await Comment.paginate({ post: postId }, options);
 
   // Respond with success message and the comments data
   res.status(200).json(new ApiResponse(200, comments, 'Comments retrieved successfully'));
