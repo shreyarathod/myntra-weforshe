@@ -1,6 +1,15 @@
 import postModel from '../models/post.model.js';
 import Board from '../models/board.model.js';
 import { ApiError } from '../utils/ApiError.js';
+import { exec } from 'child_process';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Get the filename of the current module
+const __filename = fileURLToPath(import.meta.url);
+
+// Get the directory name of the current module
+const __dirname = path.dirname(__filename);
 
 
 
@@ -21,7 +30,8 @@ export const createPost = async (req, res, next) => {
       user: user._id,
       title: req.body.title,
       description: req.body.description,
-      image: uploadResponse.url, // Use the Cloudinary URL
+      image: uploadResponse.url,
+      tags:[] 
     });
 
     // Find the board and push the new post into its posts array
@@ -34,12 +44,36 @@ export const createPost = async (req, res, next) => {
     board.posts.push(post._id);
     await board.save();
 
+    extractTagsInBackground(req.body.description, post._id);
+
     res.status(201).json({ message: 'Post created successfully', post: post });
   } catch (err) {
     console.error(err);
     next(err); // Forward the error to the error handling middleware
   }
 };
+
+async function extractTagsInBackground(description, postId) {
+  try {
+    const scriptPath = path.join(__dirname, '../scripts/tag_extractor.py');
+    exec(`python ${scriptPath} "${description}"`, async (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error extracting tags: ${error}`);
+        return;
+      }
+      const tags = stdout.trim().split(',');
+
+      // Update post with extracted tags
+      await postModel.findByIdAndUpdate(postId, { tags: tags });
+
+      console.log('Tags extracted and updated for post:', postId);
+    });
+  } catch (err) {
+    console.error('Error in background tag extraction:', err);
+  }
+}
+
+
 
 
 
@@ -123,8 +157,20 @@ export const createPostWithUrl = async (req, res) => {
       board,
       title,
       description,
-      image: imageUrl  // Use imageUrl instead of file path
+      image: imageUrl,
+      tags:[]  
     });
+
+    const postboard = await Board.findById(board);
+    if (!postboard) {
+      // Handle the case where the board is not found
+      throw new Error('Board not found');
+    }
+
+    postboard.posts.push(newPost._id);
+    await postboard.save();
+
+    extractTagsInBackground(req.body.description, newPost._id);
 
     res.status(201).json({ message: 'Post created successfully!', post: newPost });
   } catch (error) {

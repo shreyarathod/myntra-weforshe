@@ -2,6 +2,8 @@ import express, { json, urlencoded } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import Replicate from 'replicate';
+import Board from "./models/board.model.js";
+import postModel from "./models/post.model.js";
 
 
 const app = express();
@@ -83,6 +85,43 @@ app.post('/generate-image', async (req, res) => {
     res.status(500).send(`Error generating image: ${error.message}`);
   }
 });
+
+
+app.get('/search', async (req, res) => {
+  try {
+    const query = req.query.query;
+    const searchRegex = new RegExp(query, 'i'); // Case-insensitive search
+
+    // Find matching posts based on tags and titles
+    const posts = await postModel.find({
+      $or: [
+        { tags: searchRegex },
+        { title: searchRegex }
+      ]
+    });
+
+    // Find matching boards based on names
+    const boards = await Board.find({
+      $or: [
+        { name: searchRegex },
+        { posts: { $in: posts.map(post => post._id) } }
+      ]
+    }).populate('posts');
+
+    res.status(200).json({
+      success: true,
+      message: 'Search results fetched successfully',
+      data: {
+        boards,
+        posts
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error performing search');
+  }
+});
+
 
 
 

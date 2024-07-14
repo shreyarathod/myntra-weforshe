@@ -8,6 +8,7 @@ const postSchema = new mongoose.Schema({
   title: String,
   description: String,
   image: String,
+  tags:[String],
 });
 
 const postModel = mongoose.model('Post', postSchema);

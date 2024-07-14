@@ -7,6 +7,8 @@ import ImageGen from './components/imagegeneration/ImageGen';  // Import ImageGe
 import UserProfile from './components/userprofile/UserProfile';
 import BoardDisplay from './components/boarddisplay/BoardDisplay';
 import Feedcard from './components/Feed/Feedcard';
+import SearchResults from './components/Feed/SearchResults';
+import WeeklyChallenge from './components/weeklychallenge/WeeklyChallenge';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/profile" element={<UserProfile />} />  
         <Route path="/board/:boardId" element={<BoardDisplay />} />
         <Route path="/post/:postId" element={<Feedcard />} />  
+        <Route path="/search" element={<SearchResults />} />
+        <Route path="/weekly" element={<WeeklyChallenge />} />
       </Routes>
     </Router>
   );
