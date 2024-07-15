@@ -14,7 +14,7 @@ function Card({ image, para }) {
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black group-hover:from-black/70 group-hover:via-black/60 group-hover:to-black/70"></div>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 p-4">
-          <p className="text-base md:text-lg text-white">{para}</p>
+          <p className="space-grotesk-uniquifier text-base md:text-lg text-white">{para}</p>
         </div>
       </div>
     </div>

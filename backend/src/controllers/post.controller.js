@@ -4,6 +4,7 @@ import { ApiError } from '../utils/ApiError.js';
 import { exec } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 // Get the filename of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -127,21 +128,59 @@ export const getAllPosts = async (req, res) => {
   }
 };
 
+
+
+
 export const getPostById = async (req, res) => {
   try {
     const { postId } = req.params;
-    const post = await postModel.findById(postId).select('image title description').exec(); // Select fields you want to return
+    const post = await postModel.findById(postId).select('image title description tags').exec(); // Include 'tags' to pass to Python script
 
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    res.status(200).json(post);
+    const scriptPath = path.join(__dirname, '../scripts/products.py');
+    const outputFilePath = path.join(__dirname, '../scripts/products_output.json');
+    console.log(`python ${scriptPath} "${post.tags.join(',')}"`);
+
+    const fetchProducts = new Promise((resolve, reject) => {
+      exec(`python ${scriptPath} "${post.tags.join(',')}"`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return reject(error.message);
+        }
+        if (stderr) {
+          console.error(`stderr: ${stderr}`);
+          return reject(stderr);
+        }
+
+        fs.readFile(outputFilePath, 'utf8', (err, data) => {
+          if (err) {
+            console.error(`Error reading output file: ${err}`);
+            return reject('Error reading output file');
+          }
+          let products;
+          try {
+            products = JSON.parse(data).slice(0, 10); // Limit to 10 products
+            resolve(products);
+          } catch (err) {
+            console.error(`Error parsing JSON: ${err}`);
+            reject('Error parsing response');
+          }
+        });
+      });
+    });
+
+    const products = await fetchProducts;
+    res.status(200).json({ post, products });
   } catch (error) {
     console.error('Error fetching post:', error.message);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+
 
 export const createPostWithUrl = async (req, res) => {
   try {

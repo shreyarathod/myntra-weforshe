@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import Navbar2 from './Navbar2';
 import { useNavigate } from 'react-router-dom';
+import Footer from '../footer/Footer';
 
 function SearchResults() {
   const location = useLocation();
@@ -44,10 +45,31 @@ function SearchResults() {
       <Navbar2 />
       <div className="bg-white min-h-screen p-5">
         <div className="container mx-auto">
-          <h1 className="text-3xl font-bold mb-6 text-gray-900">Search Results</h1>
+          <h1 className="text-4xl bona-nova-sc-regular-400 font-bold mb-6 text-gray-900">Search Results</h1>
           
-          <div className="mb-10 bg-pink-100 p-6 rounded-lg">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Boards</h2>
+          <div className="p-6  mb-10 rounded-lg bg-pink-50">
+            <h2 className="text-3xl bona-nova-sc-regular-400 font-semibold mb-4 text-gray-800">Posts</h2>
+            {results.posts.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {results.posts.map(post => (
+                  <div key={post._id} className="bg-white rounded-lg shadow-md p-3">
+                    <img
+                      onClick={handlePostRedirection(post._id)}  
+                      src={post.image}
+                      alt={post.title}
+                      className="w-full h-64 object-cover rounded-md mb-4"
+                    />
+                    <h3 className="text-xl font-semibold space-grotesk-uniquifier-bold text-gray-800 mb-2">{post.title}</h3>
+                    <p className="text-gray-700 space-grotesk-uniquifier">{post.description}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No posts found</p>
+            )}
+          </div>
+          <div className=" bg-pink-100 p-6 rounded-lg">
+            <h2 className="text-3xl font-semibold mb-4 bona-nova-sc-regular-400 text-gray-800">Boards</h2>
             {results.boards.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {results.boards.map(board => (
@@ -60,8 +82,8 @@ function SearchResults() {
                         className="w-full h-64 object-cover rounded-md mb-4"
                       />
                     )}
-                    <h3 className="text-xl font-semibold text-gray-800 mb-2">{board.name}</h3>
-                    <p className="text-gray-700">{board.description}</p>
+                    <h3 className="text-xl font-semibold space-grotesk-uniquifier-bold text-gray-800 mb-2">{board.name}</h3>
+                    <p className="text-gray-700 space-grotesk-uniquifier">{board.description}</p>
                     
                   </div>
                 ))}
@@ -71,29 +93,9 @@ function SearchResults() {
             )}
           </div>
 
-          <div className="p-6 rounded-lg bg-pink-50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Posts</h2>
-            {results.posts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {results.posts.map(post => (
-                  <div key={post._id} className="bg-white rounded-lg shadow-md p-3">
-                    <img
-                      onClick={handlePostRedirection(post._id)}  
-                      src={post.image}
-                      alt={post.title}
-                      className="w-full h-64 object-cover rounded-md mb-4"
-                    />
-                    <h3 className="text-xl font-semibold text-gray-800 mb-2">{post.title}</h3>
-                    <p className="text-gray-700">{post.description}</p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p>No posts found</p>
-            )}
-          </div>
         </div>
       </div>
+      <Footer/>
     </>
   );
 }

@@ -10,11 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.1",
+    "@material-tailwind/react": "^2.1.9",
     "axios": "^1.7.2",
+    "gsap": "^3.12.5",
     "qs": "^6.12.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.24.1"
+    "react-fast-marquee": "^1.6.5",
+    "react-router-dom": "^6.24.1",
+    "typewriter-effect": "^2.21.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

@@ -5,9 +5,25 @@ import Navbar2 from './Navbar2.jsx';
 import { useNavigate,  } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Footer from '../footer/Footer.jsx';
+import gsap from 'gsap'
+import {useGSAP} from '@gsap/react'
+
 
 
 function Feed() {
+  {useGSAP(()=>{
+    gsap.to('.feed_headings', {
+      opacity:1, 
+      delay:1,
+    stagger:0.5 }
+    )
+
+    
+  
+  }, [])}
+  
+ 
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
 
@@ -35,7 +51,7 @@ function Feed() {
     return shuffled.slice(0, count); // Return the first 'count' items from the shuffled array
   };
   
-  const randomPosts = getRandomPosts(posts, 8);
+  const randomPosts = getRandomPosts(posts, posts.length);
   console.log(randomPosts)
 
     const handleImageGen = () => {
@@ -51,19 +67,20 @@ function Feed() {
 
   return (
     
-    <>
+    <div>
     <Navbar2/>
-    <div className="w-full  flex flex-col bg-[url('https://images.unsplash.com/photo-1629654857513-1136aef1b10f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bGlnaHQlMjBwaW5rJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D')]">
-      <div className=' flex justify-around  mx-5 py-5 rounded-md mt-4'>
-        <h1 className='text-4xl font-semibold'>Elevate Your Fashion</h1>
-        <button onClick={handleImageGen} className="group group-hover:before:duration-500 group-hover:after:duration-500 after:duration-500 hover:border-rose-300 hover:before:[box-shadow:_20px_20px_20px_30px_#a21caf] duration-500 before:duration-500 hover:duration-500 hover:after:-right-8 hover:before:right-12 hover:before:-bottom-8 hover:before:blur origin-left hover:decoration-2 hover:text-rose-400 relative bg-white border-slate-300 h-16 w-96 border-2 text-left p-3 text-zinc-600 text-base font-bold rounded-lg overflow-hidden before:absolute before:w-12 before:h-12 before:content[''] before:right-1 before:top-1 before:z-0 before:bg-violet-500 before:rounded-full before:blur-lg after:absolute after:z-0 after:w-20 after:h-20 after:content[''] after:bg-rose-300 after:right-8 after:top-3 after:rounded-full after:blur-lg">
-          Generate AI design
+    <div   className="w-full  h-full bg-no-repeat bg-cover flex flex-col bg-[url('https://images.unsplash.com/photo-1629654857513-1136aef1b10f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bGlnaHQlMjBwaW5rJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D')]">
+      <div className=' flex flex-col mx-auto text-center justify-around   py-5 rounded-md mt-4'>
+        <h1 className=' feed_headings opacity-0 feed_headings bona-nova-sc-regular-500 text-5xl font-semibold mb-4 mt-10'>Fashion Board AI Generator : Elevate Your Fashion</h1>
+        <p className="feed_headings opacity-0 space-grotesk-uniquifier text-xl font-medium mb-10">Got any ideas you'd like to bring to life? Head over to our design generator now!</p>
+        <button onClick={handleImageGen} className="feed_headings opacity-0 group bona-nova-sc-regular-400 mx-auto group-hover:before:duration-500 group-hover:after:duration-500 after:duration-500 hover:border-rose-300 hover:before:[box-shadow:_20px_20px_20px_30px_#a21caf] duration-500 before:duration-500 hover:duration-500 hover:after:-right-8 hover:before:right-12 hover:before:-bottom-8 hover:before:blur origin-left hover:decoration-2 hover:text-rose-500 relative bg-white border-slate-300 h-16 w-96 border-2 text-left p-3 text-zinc-600 text-xl font-bold rounded-lg overflow-hidden before:absolute before:w-12 before:h-12 before:content[''] before:right-1 before:top-1 before:z-0 before:bg-violet-500 before:rounded-full before:blur-lg after:absolute after:z-0 after:w-20 after:h-20 after:content[''] after:bg-rose-300 after:right-8 after:top-3 after:rounded-full after:blur-lg">
+          AI Design Generator
         </button>
       </div>
-      <div className=' flex justify-around items-center mx-5 mt-10 py-5 bg-white px-5 rounded-lg'>
+      <div className=' feed_headings opacity-0 flex w-5/6 justify-around items-center mx-5 mt-10 py-5 bg-white px-5 rounded-lg mx-auto'>
         <div className='w-1/2'>
-        <h1 className='text-3xl font-bold'>Loved the look?</h1>
-          <p className='text-md text-xl'>
+        <h1 className='text-4xl bona-nova-sc-bold'>Loved the look?</h1>
+          <p className='text-md text-xl space-grotesk-uniquifier'>
             Now you can shop items directly from the FashionBoard
           </p>
         </div>
@@ -85,34 +102,34 @@ function Feed() {
             </a>
       </div>
     </div>
-    <div className='mx-5 mt-5'>
-    <div className="flex justify-between items-center mb-4">
-              <p className="text-xl font-semibold">All Designs</p>
-              
-            </div>
-            
-            
-            <div className="flex flex-wrap -mx-2">
-            {randomPosts.length > 0 ? (
-              randomPosts.map((post) => (
-                <div key={post._id} className="w-full h-64 sm:w-1/4 px-2 mb-4 overflow-hidden">
-                  <img
-                  onClick={handlePostRedirection(post._id)}
-                    src={post.image} // Make sure imageUrl is valid and accessible
-                    alt={post.title}    // Ensure that title exists
-                    className="w-full rounded-lg object-cover h-full"
-                  />
-                </div>
-              ))
-            ) : (
-              <p>No posts available</p>
-            )}
-          </div>
+    <div className='mx-5 mt-5 p-4 bg-transparent shadow-none rounded-lg '>
+  <div className="flex justify-center mb-12 mt-8">
+    <p className="text-4xl bona-nova-sc-regular-500 font-semibold">Latest Designs</p>
+  </div>
+  
+  <div className="flex flex-wrap justify-center gap-8"> {/* Centering items horizontally */}
+    {randomPosts.length > 0 ? (
+      randomPosts.map((post) => (
+        <div key={post._id} className=" feed_images w-full shadow-none h-72 sm:w-1/5 px-2 mb-4 overflow-hidden rounded-lg"> {/* Smaller height and width for internal div */}
+          <img
+            onClick={handlePostRedirection(post._id)}
+            src={post.image} // Make sure imageUrl is valid and accessible
+            alt={post.title} // Ensure that title exists
+            className="w-full h-full rounded-lg object-cover"
+          />
         </div>
+      ))
+    ) : (
+      <p>No posts available</p>
+    )}
+  </div>
+</div>
+
+
 
     </div>
-    
-    </>
+    <Footer/>
+    </div>
   );
 }
 

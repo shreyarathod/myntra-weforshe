@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import Navbar from '../navbar/Navbar';
-
+import Navbar2 from './Navbar2';
+import Footer from '../footer/Footer';
+import Loader from './Loader';
 function Feedcard() {
   const { postId } = useParams();
   const [post, setPost] = useState(null);
@@ -15,6 +16,7 @@ function Feedcard() {
   const [hasMoreComments, setHasMoreComments] = useState(true);
   const [posts, setPosts] = useState([]);
   const [posts2, setPosts2] = useState([]);
+  const [products, setProducts] = useState([]); // Added state for products
   const [board, setBoard] = useState(null);
   const commentsContainerRef = useRef(null);
   const navigate = useNavigate();
@@ -46,8 +48,13 @@ function Feedcard() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/v1/posts/${postId}`);
-        setPost(response.data);
+        const response = await axios.get(`http://localhost:8000/api/v1/posts/${postId}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          }
+        });
+        setPost(response.data.post);
+        setProducts(response.data.products); // Fetch and set products data
         fetchLikeStatus();
         fetchComments(1);
       } catch (error) {
@@ -117,7 +124,6 @@ function Feedcard() {
 
   const handleBoardChange = async (event) => {
     const boardId = event.target.value;
-    console.log(boardId);
     setSelectedBoard(boardId);
 
     if (post) {
@@ -145,42 +151,14 @@ function Feedcard() {
   };
 
   useEffect(() => {
-    const fetchBoards = async () => {
-      try {
-        const accessToken = localStorage.getItem('accessToken');
-        const response = await axios.get('http://localhost:8000/api/v1/users/boards', {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`
-          }
-        });
-
-        const boards = response.data.data;
-        if (boards.length > 0) {
-          setBoards(boards);
-        } else {
-          console.error('No boards found');
-        }
-      } catch (error) {
-        console.error('Error fetching boards:', error);
-        alert(`Error fetching boards: ${error.response ? error.response.data.message : error.message}`);
-      }
-    };
-
-    fetchBoards();
-  }, []);
-
-  useEffect(() => {
     if (post && post.board) {
       const fetchBoardData = async () => {
         try {
-          console.log('Fetching data for boardId:', post.board);
           const boardResponse = await axios.get(`http://localhost:8000/api/v1/boards/${post.board}`);
           setBoard(boardResponse.data.data);
-          console.log('Board data:', boardResponse.data.data);
 
           const postsResponse = await axios.get(`http://localhost:8000/api/v1/boards/${post.board}/posts`);
           setPosts2(postsResponse.data.data);
-          console.log('Board posts:', postsResponse.data.data);
         } catch (error) {
           console.error('Error fetching board data:', error);
         }
@@ -249,14 +227,14 @@ function Feedcard() {
   };
 
   if (!post) {
-    return <p>Loading...</p>;
+    return <Loader/>;
   }
 
   return (
     <>
-      <Navbar />
+      <Navbar2 />
       <div className='w-full h-screen pt-5'>
-        <div className="w-full max-w-4xl md:h-[70vh] mx-auto bg-slate-200 rounded-xl shadow-md overflow-hidden flex flex-col md:flex-row">
+        <div className="w-full mt-10 max-w-4xl md:h-[70vh] mx-auto bg-slate-200 rounded-xl shadow-md overflow-hidden flex flex-col md:flex-row">
           <div className="w-full md:w-1/2">
             <img
               className="h-full object-cover w-full"
@@ -319,38 +297,50 @@ function Feedcard() {
             </div>
           </div>
         </div>
-        <div className='mx-5 mt-10'>
+        <div className='mx-5 mt-10 p-4 rounded-lg'>
           <div className="flex justify-between items-center my-6">
-            <p className="text-xl font-semibold">See More Posts</p>
+            <p className="text-2xl bona-nova-sc-regular-500 font-semibold text-black">Similar Products on Myntra!</p>
           </div>
           <div className="flex flex-wrap -mx-2">
-            {posts2.length > 0 ? (
-              posts2.map((post) => (
-                <div key={post._id} className="w-full h-64 sm:w-1/4 px-2 mb-4 overflow-hidden">
-                  <img
-                    onClick={handlePostRedirection(post._id)}
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full rounded-lg object-cover h-full cursor-pointer"
-                  />
+            {products.length > 0 ? (
+              products.map((product) => (
+                <div key={product.id} className="w-full h-96 sm:w-1/2 md:w-1/3 lg:w-1/4 px-2 mb-4 overflow-hidden rounded-lg">
+                  <a
+                    href={`https://www.myntra.com/${product.url}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full h-full flex flex-col justify-between"
+                  >
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                    <div className="p-2 bg-white rounded-b-lg shadow-md flex flex-col h-24">
+                      <p className="text-sm font-semibold">{product.name}</p>
+                      <p className="text-xs text-gray-600">{product.price}</p>
+                    </div>
+                  </a>
                 </div>
               ))
             ) : (
-              <p>No posts available</p>
+              <p>No products available</p>
             )}
           </div>
+        </div>
+        <div className='mx-5 mt-10 '>
           <div className="flex justify-between items-center my-6">
-            <p className="text-xl font-semibold">See More Posts</p>
+            <p className="text-2xl bona-nova-sc-regular-500 pl-4 font-semibold">Similar Posts</p>
           </div>
-          <div className="flex flex-wrap -mx-2">
+          <div className="flex flex-wrap  mx-2">
             {randomPosts.length > 0 ? (
               randomPosts.map((post) => (
-                <div key={post._id} className="w-full h-64 sm:w-1/4 px-2 mb-4 overflow-hidden">
+                <div key={post._id} className="w-full h-96 sm:w-1/2 md:w-1/3 lg:w-1/4 px-2 mb-4 overflow-hidden rounded-lg">
                   <img
                     onClick={handlePostRedirection(post._id)}
                     src={post.image}
                     alt={post.title}
-                    className="w-full rounded-lg object-cover h-full cursor-pointer"
+                    className="w-full h-full object-cover cursor-pointer rounded-lg"
                   />
                 </div>
               ))
@@ -359,7 +349,9 @@ function Feedcard() {
             )}
           </div>
         </div>
+        <Footer/>
       </div>
+      
     </>
   );
 }

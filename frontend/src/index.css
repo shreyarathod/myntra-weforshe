@@ -1,3 +1,67 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+* {
+    -ms-overflow-style: none;
+  }
+  
+  ::-webkit-scrollbar {
+    display: none;
+  }
+ 
+
+  
+ 
+.space-grotesk-uniquifier{
+  font-family: "Space Grotesk", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.space-grotesk-uniquifier-bold{
+  font-family: "Space Grotesk", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.bona-nova-sc-regular-400 {
+    font-family: "Bona Nova", serif;
+    font-weight: 400;
+    font-style: normal;
+  } 
+
+  .bona-nova-sc-regular-500 {
+    font-family: "Bona Nova", serif;
+    font-weight: 500;
+    font-style: normal;
+  } 
+   
+  .bona-nova-sc-regular-300 {
+    font-family: "Bona Nova", serif;
+    font-weight: 300;
+    font-style: normal;
+  } 
+   
+  
+  
+  .bona-nova-sc-regular-italic {
+    font-family: "Bona Nova", serif;
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  .bona-nova-sc-bold {
+    font-family: "Bona Nova", serif;
+    font-weight: 600;
+    font-style: normal;
+  }
+  
+
+
+::-webkit-scrollbar {
+    display: none;
+}
