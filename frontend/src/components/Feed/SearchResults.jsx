@@ -57,10 +57,10 @@ function SearchResults() {
                       onClick={handlePostRedirection(post._id)}  
                       src={post.image}
                       alt={post.title}
-                      className="w-full h-64 object-cover rounded-md mb-4"
+                      className="w-full h-64 object-cover rounded-md mb-1"
                     />
-                    <h3 className="text-xl font-semibold space-grotesk-uniquifier-bold text-gray-800 mb-2">{post.title}</h3>
-                    <p className="text-gray-700 space-grotesk-uniquifier">{post.description}</p>
+                    {/* <h3 className="text-xl font-semibold space-grotesk-uniquifier-bold text-gray-800 mb-2">{post.title}</h3>
+                    <p className="text-gray-700 space-grotesk-uniquifier">{post.description}</p> */}
                   </div>
                 ))}
               </div>

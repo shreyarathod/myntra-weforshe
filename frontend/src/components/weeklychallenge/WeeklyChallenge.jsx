@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../footer/Footer';
 import Typewriter from "typewriter-effect";
 import Marquee from "react-fast-marquee";
-import "./WeeklyChallenge.css";
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 
@@ -23,7 +22,8 @@ function WeeklyChallenge() {
     setIsPopupOpen(true);
   };
 
-  const weeklyChallenge = "pink";
+  const weeklyChallenge = "Cottage Core";
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -46,9 +46,10 @@ function WeeklyChallenge() {
     images.forEach(image => {
       gsap.fromTo(
         image,
-        { opacity: 0 },
+        { opacity: 0, y: 20 },
         {
           opacity: 1,
+          y: 0,
           duration: 1,
           stagger: 0.5,
           scrollTrigger: {
@@ -60,7 +61,7 @@ function WeeklyChallenge() {
         }
       );
     });
-  }, []);
+  }, [results]);
 
   const handleClosePopup = () => {
     setIsPopupOpen(false);

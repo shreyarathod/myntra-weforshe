@@ -87,7 +87,7 @@ function MoodboardPopup({ isOpen, onClose }) {
               type="submit"
               className="bg-pink-200 text-black font-semibold py-2 px-4 rounded-lg hover:bg-pink-300"
             >
-              Create Moodboard
+              Create FashionBoard
             </button>
           </div>
         </form>

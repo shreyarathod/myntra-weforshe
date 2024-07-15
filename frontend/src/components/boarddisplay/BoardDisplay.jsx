@@ -12,6 +12,7 @@ function BoardDisplay() {
     const [posts, setPosts] = useState([]);
     const [usernames, setUsernames] = useState({});
     const [ownerUsername, setOwnerUsername] = useState('');
+    
 
     useEffect(() => {
         const fetchBoardData = async () => {
@@ -73,19 +74,15 @@ function BoardDisplay() {
                             <span className="font-semibold space-grotesk-uniquifier-bold">Collaborators:</span> {board.collaborators.map(id => usernames[id]).join(', ')}
                         </p>
                     )}
-                    <div className='mt-6'>
-                        <button className='bg-pink-400 text-white font-semibold py-2 px-4 rounded hover:bg-pink-500 transition duration-300'>
-                            Add Collaborators
-                        </button>
-                    </div>
+                  
                 </div>
 
                 <div className='mt-10'>
                     <div className="flex justify-between items-center mb-6">
-                        <p className="text-3xl font-semibold bona-nova-sc-regular-500 text-gray-800">Your Posts</p>
+                        <p className="text-3xl font-semibold bona-nova-sc-regular-500 text-gray-800"> Posts</p>
                     </div>
                     
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-2 pb-10 sm:grid-cols-3 lg:grid-cols-4 gap-8">
                         {posts.map((post) => (
                             <div key={post._id} className="w-full h-96 bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:scale-105 transition-transform duration-300 ease-in-out">
                                 <img

@@ -22,6 +22,25 @@ function Feedcard() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    fetchBoards();
+  }, []);
+
+  const fetchBoards = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const response = await axios.get('http://localhost:8000/api/v1/users/boards', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+      setBoards(response.data.data);
+    } catch (error) {
+      console.error('Error fetching boards:', error);
+      alert(`Error fetching boards: ${error.response ? error.response.data.message : error.message}`);
+    }
+  };
+
+  useEffect(() => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get('http://localhost:8000/api/v1/posts/allposts');
@@ -126,29 +145,27 @@ function Feedcard() {
     const boardId = event.target.value;
     setSelectedBoard(boardId);
 
-    if (post) {
-      try {
-        const formData = new FormData();
-        formData.append('board', boardId);
-        formData.append('title', post.title);
-        formData.append('description', post.description);
-        formData.append('image', post.image);
+    try {
+      await axios.post('http://localhost:8000/api/v1/posts/create-post-with-url', {
+        board: boardId,
+        title: post.title,
+        description: post.description,
+        imageUrl: post.image,  // Use imageUrl instead of file
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'Content-Type': 'application/json'  // Set content type to JSON
+        }
+      });
 
-        await axios.post('http://localhost:8000/api/v1/posts/create-post-with-url', formData, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-
-        alert('Post created successfully!');
-        setSelectedBoard('');
-      } catch (error) {
-        console.error('Failed to create post:', error);
-        alert(`Failed to create post: ${error.response ? error.response.data.message : error.message}`);
-      }
+      alert('Post created successfully!');
+      setSelectedBoard('');
+    } catch (error) {
+      console.error('Failed to create post:', error);
+      alert(`Failed to create post: ${error.response ? error.response.data.message : error.message}`);
     }
   };
+
 
   useEffect(() => {
     if (post && post.board) {
@@ -265,7 +282,7 @@ function Feedcard() {
                   onChange={handleBoardChange}
                   className="appearance-none cursor-pointer hover:placeholder-shown:bg-emerald-500 relative bg-transparent ring-0 outline-none text-neutral-900 placeholder-violet-700 text-sm font-semibold rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 pl-10"
                 >
-                  <option disabled hidden value="">Add to Moodboard</option>
+                  <option disabled hidden value="">Add to FashionBoard</option>
                   {boards.map((board) => (
                     <option key={board._id} value={board._id}>{board.name}</option>
                   ))}
@@ -330,7 +347,7 @@ function Feedcard() {
         </div>
         <div className='mx-5 mt-10 '>
           <div className="flex justify-between items-center my-6">
-            <p className="text-2xl bona-nova-sc-regular-500 pl-4 font-semibold">Similar Posts</p>
+            <p className="text-2xl bona-nova-sc-regular-500 pl-4 font-semibold">Other Posts</p>
           </div>
           <div className="flex flex-wrap  mx-2">
             {randomPosts.length > 0 ? (

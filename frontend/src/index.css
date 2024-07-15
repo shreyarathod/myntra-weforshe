@@ -62,6 +62,17 @@
   
 
 
-::-webkit-scrollbar {
-    display: none;
+
+
+/* Tailwind CSS Custom Styles for Feed Component */
+.dot {
+  @apply w-2 h-2 bg-white rounded-full mb-1;
+}
+
+.button {
+  @apply bg-white text-gray-800 py-1 px-2 rounded hover:bg-gray-300 transition duration-200;
+}
+
+.overlay {
+  @apply absolute inset-0 bg-gray-800 bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4;
 }
