@@ -45,4 +45,7 @@ Check out our live demo [here](https://drive.google.com/drive/folders/1RKNSuFbAC
 5. **Search and Discover:** Use the enhanced search functionality to find designs and fashion boards that interest you.
 
 
-
+### Team Project Cotributors : 
+ - [**Shreya Rathod**](https://github.com/shreyarathod)
+ - [**Riva Rodrigues**](https://github.com/Riva-Rodrigues)
+ - [**Nirmitee Sarode**](https://github.com/NirmiteeS)
